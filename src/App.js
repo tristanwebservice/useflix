@@ -1,4 +1,5 @@
 import { useState } from "react";
+import StarRating from "./StarRating";
 
 const tempMovieData = [
   {
@@ -53,6 +54,7 @@ const average = (arr) =>
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [movieRating, setMovieRating] = useState();
   return (
     <>
       <NavBar>
@@ -60,6 +62,16 @@ export default function App() {
         <Search />
         <NumResults movies={movies} />
       </NavBar>
+      <StarRating
+        size={30}
+        color="yellow"
+        className="test"
+        maxRating={10}
+        messages={[]}
+        defaultRating={0}
+        onSetRating={setMovieRating}
+      />
+      <p>this movie was rated as {movieRating}</p>
 
       <Main>
         <Box>
