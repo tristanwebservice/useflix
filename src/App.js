@@ -57,11 +57,17 @@ export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
   const [movieRating, setMovieRating] = useState();
+  const query = `pokemon`;
 
-  useEffect(function () {
-    fetch(`http://www.omdbapi.com/?apikey=${movieKey}&s=interstellar`)
-      .then((res) => res.json())
-      .then((data) => setMovies(data.Search));
+  useEffect(() => {
+    async function fetchMovies() {
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${movieKey}&s=${query}`
+      );
+      const data = await res.json();
+      setMovies(data.Search);
+    }
+    fetchMovies();
   }, []);
 
   return (
@@ -71,6 +77,7 @@ export default function App() {
         <Search />
         <NumResults movies={movies} />
       </NavBar>
+
       <StarRating
         size={30}
         color="yellow"
