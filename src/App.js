@@ -55,12 +55,16 @@ const movieKey = `f84fc31d`; // bad practice! public key used here for demo purp
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState([]);
   const [movieRating, setMovieRating] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(``);
   const [query, setQuery] = useState(``);
   const [selectedId, setSelectedId] = useState(null);
+
+  const [watched, setWatched] = useState(() => {
+    const storedValue = localStorage.getItem(`watched`);
+    return storedValue ? JSON.parse(storedValue) : [];
+  });
 
   function handleSelectMovie(id) {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
@@ -71,12 +75,22 @@ export default function App() {
   }
 
   function handleAddWatched(movie) {
-    setWatched((watched) => [...watched, movie]);
+    setWatched((watched) => {
+      const updatedWatched = [...watched, movie];
+      return updatedWatched;
+    });
   }
 
   function handleDeleteWatched(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
+
+  useEffect(
+    function () {
+      localStorage.setItem(`watched`, JSON.stringify(watched));
+    },
+    [watched]
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -337,7 +351,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
               <p>{genre}</p>
               <p>
                 <span>⭐</span>
-                {imdbRating}
+                {imdbRating} rating on IMDB
               </p>
             </div>
           </header>
