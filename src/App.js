@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
 import { useLocalStorageState } from "./useLocalStorageState";
+import { useKey } from "./useKey";
 
 const movieKey = `f84fc31d`; // bad practice! public key used here for demo purposes
 
@@ -99,21 +100,13 @@ function Logo() {
 function Search({ query, setQuery }) {
   const inputEl = useRef(null);
 
-  useEffect(() => {
-    function callback(e) {
-      if (document.activeElement === inputEl.current) return;
-      if (e.code === `Enter`) {
-        inputEl.current.focus();
-        setQuery(``);
-      }
-    }
+  useKey(`enter`, function () {});
 
-    document.addEventListener("keydown", callback);
-
-    return () => {
-      document.removeEventListener("keydown", callback);
-    };
-  }, [setQuery]);
+  useKey(`Enter`, () => {
+    if (document.activeElement === inputEl.current) return;
+    inputEl.current.focus();
+    setQuery("");
+  });
 
   return (
     <input
@@ -224,16 +217,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onCloseMovie();
   }
 
-  useEffect(() => {
-    const callback = (e) => {
-      if (e.code === `Escape`) {
-        onCloseMovie();
-      }
-    };
-
-    document.addEventListener(`keydown`, callback);
-    return () => document.removeEventListener(`keydown`, callback);
-  }, [onCloseMovie]);
+  useKey(`Escape`, onCloseMovie);
 
   useEffect(
     function () {
